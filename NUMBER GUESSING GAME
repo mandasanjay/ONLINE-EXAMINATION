@@ -1,0 +1,43 @@
+//NUMBER GUESSING GAME
+package com.studyopedia;
+
+import java.util.Scanner;
+import java.util.Random;
+
+public class NumberGuessingGame {
+    public static void main(String[] args) {
+        // Initialize variables
+        Random random = new Random();
+        int targetNumber = random.nextInt(100) + 1; // Generate a random number between 1 and 100
+        int maxAttempts = 10; // Limit the number of attempts
+        int attempts = 0;
+        boolean guessedCorrectly = false;
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Number Guessing Game!");
+        System.out.println("I have selected a number between 1 and 100.");
+        System.out.println("You have " + maxAttempts + " attempts to guess the number.");
+
+        while (attempts < maxAttempts && !guessedCorrectly) {
+            System.out.print("Enter your guess: ");
+            int userGuess = scanner.nextInt();
+            attempts++;
+
+            if (userGuess == targetNumber) {
+                guessedCorrectly = true;
+                System.out.println("Congratulations! You guessed the number in " + attempts + " attempts.");
+            } else if (userGuess < targetNumber) {
+                System.out.println("Too low! Try a higher number.");
+            } else {
+                System.out.println("Too high! Try a lower number.");
+            }
+
+            if (!guessedCorrectly && attempts == maxAttempts) {
+                System.out.println("Sorry, you've run out of attempts. The number was " + targetNumber + ".");
+            }
+        }
+
+        scanner.close();
+    }
+}
