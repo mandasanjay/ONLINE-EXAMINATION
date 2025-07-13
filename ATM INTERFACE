@@ -1,0 +1,137 @@
+package com.studyopedia;
+import java.util.*;
+public class ATMSystem {
+    static class Account {
+        private String id;
+        private String pin;
+        private double balance;
+        private List<String> history;
+        public Account(String id, String pin, double balance) {
+            this.id = id;
+            this.pin = pin;
+            this.balance = balance;
+            this.history = new ArrayList<>();
+            history.add("Account created with ₹" + balance);
+        }
+        public String getId() {
+            return id;
+        }
+        public boolean checkPin(String inputPin) {
+            return this.pin.equals(inputPin);
+        }
+        public double getBalance() {
+            return balance;
+        }
+        public void deposit(double amount) {
+            if (amount > 0) {
+                balance += amount;
+                history.add("Deposited ₹" + amount);
+                System.out.println("✅ Deposited ₹" + amount);
+            } else {
+                System.out.println("❌ Invalid deposit amount.");
+            }
+        }
+        public void withdraw(double amount) {
+            if (amount > 0 && amount <= balance) {
+                balance -= amount;
+                history.add("Withdrew ₹" + amount);
+                System.out.println("✅ Withdrew ₹" + amount);
+            } else {
+                System.out.println("❌ Insufficient balance or invalid amount.");
+            }
+        }
+        public void transfer(Account receiver, double amount) {
+            if (amount > 0 && amount <= balance) {
+                balance -= amount;
+                receiver.balance += amount;
+                history.add("Transferred ₹" + amount + " to " + receiver.getId());
+                receiver.history.add("Received ₹" + amount + " from " + this.getId());
+                System.out.println("✅ Transferred ₹" + amount + " to " + receiver.getId());
+            } else {
+                System.out.println("❌ Insufficient balance or invalid amount.");
+            }
+        }
+        public void printHistory() {
+            System.out.println("📜 Transaction History:");
+            for (String record : history) {
+                System.out.println(" - " + record);
+            }
+        }
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        Map<String, Account> accounts = new HashMap<>();
+        accounts.put("1001", new Account("1001", "1234", 5000));
+        accounts.put("1002", new Account("1002", "2345", 3000));
+        System.out.println("=== Welcome to the ATM System ===");
+        while (true) {
+            System.out.print("Enter User ID (or 'exit' to quit): ");
+            String userId = sc.nextLine();
+            if (userId.equalsIgnoreCase("exit")) {
+                System.out.println("👋 Thank you for using the ATM.");
+                break;
+            }
+            Account current = accounts.get(userId);
+            if (current == null) {
+                System.out.println("❌ Account not found.");
+                continue;
+            }
+            System.out.print("Enter PIN: ");
+            String pin = sc.nextLine();
+            if (!current.checkPin(pin)) {
+                System.out.println("❌ Incorrect PIN.");
+                continue;
+            }
+            boolean session = true;
+            while (session) {
+                System.out.println("\n--- Menu ---");
+                System.out.println("1. View Balance");
+                System.out.println("2. Deposit");
+                System.out.println("3. Withdraw");
+                System.out.println("4. Transfer");
+                System.out.println("5. Transaction History");
+                System.out.println("6. Logout");
+                System.out.print("Choose an option: ");
+                String option = sc.nextLine();
+                switch (option) {
+                    case "1":
+                        System.out.println("💰 Balance: ₹" + current.getBalance());
+                        break;
+                    case "2":
+                        System.out.print("Enter amount to deposit: ");
+                        double deposit = Double.parseDouble(sc.nextLine());
+                        current.deposit(deposit);
+                        break;
+                    case "3":
+                        System.out.print("Enter amount to withdraw: ");
+                        double withdraw = Double.parseDouble(sc.nextLine());
+                        current.withdraw(withdraw);
+                        break;
+                    case "4":
+                        System.out.print("Enter recipient ID: ");
+                        String toId = sc.nextLine();
+                        Account recipient = accounts.get(toId);
+                        if (recipient == null) {
+                            System.out.println("❌ Recipient not found.");
+                        } else {
+                            System.out.print("Enter amount to transfer: ");
+                            double amount = Double.parseDouble(sc.nextLine());
+                            current.transfer(recipient, amount);
+                        }
+                        break;
+                    case "5":
+                        current.printHistory();
+                        break;
+                    case "6":
+                        session = false;
+                        System.out.println("🔓 Logged out.");
+                        break;
+                    default:
+                        System.out.println("❌ Invalid option.");
+                }
+            }
+        }
+        sc.close();
+    }
+}
